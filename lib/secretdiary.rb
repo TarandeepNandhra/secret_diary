@@ -1,32 +1,58 @@
 class SecretDiary
 
-  attr_accessor :status, :entry
-
   def initialize
-    @status = false
-    @entry = []
+    @security = Security.new
+    @entry = Entries.new
   end
 
   def lock
-    self.status = false
+    @security.lock
   end
 
   def unlock
-    self.status = true
+    @security.unlock
   end
 
   def add_entry(input)
-
-    unless self.status
-      raise("diary locked!")
-    else
-      self.entry << input
-    end
-
+    @entry.add_entry(input, @security.status)
   end
 
   def get_entries
-    self.entry.each { |entry| print entry }
+    @entry.get_entries(@security.status)
   end
 
+end
+
+class Security
+  attr_reader :status
+  def initialize
+    @status = false
+  end
+  
+  def lock
+    @status = false
+  end
+
+  def unlock
+    @status = true
+  end
+end
+
+class Entries
+  attr_reader :entries
+  def initialize
+    @entries = []
+  end
+
+  def add_entry(input, status)
+    raise("diary locked!") unless status
+      
+    @entries << input
+  end
+
+  def get_entries(status)
+    raise("diary locked!") unless status
+          
+    @entries.each { |entry| p entry }
+  end
 end
